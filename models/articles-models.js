@@ -9,5 +9,13 @@ exports.fetchArticle = (articleId) => {
 )}
 
 exports.fetchArticles = () => {
-  
+  const queryStr = `
+  SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  GROUP BY articles.article_id
+  `
+  return db.query(queryStr).then((result) => {
+    console.log(result.rows)
+    return result.rows
+  })
 }

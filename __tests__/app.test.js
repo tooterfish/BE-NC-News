@@ -66,6 +66,36 @@ describe('GET /api/articles/:article_id', () => {
   })
 })
 
+describe.only('GET /api/articles', () => {
+  test('200: respond with array of article objects with all properties + comment_count', () => {
+    const expected = 
+    {
+      article_id: expect.any(Number),
+      title: expect.any(String),
+      topic: expect.any(String),
+      author: expect.any(String),
+      body: expect.any(String),
+      created_at: expect.any(String),
+      votes: expect.any(Number),
+      article_img_url: expect.any(String),
+      comment_count: expect.any(Number)
+    }
+    let expectedTotalComments = 0
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeInstanceOf(Array)
+      expect(articles).toHaveLength(12)
+      articles.forEach((article) => {
+        expect(article).toEqual(expected)
+        expectedTotalComments += article.comment_count
+      })
+      expect(expectedTotalComments).toBe(18)
+    })
+  });
+});
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')
