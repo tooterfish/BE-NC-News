@@ -21,6 +21,7 @@ describe('GET /api/topics', () => {
     .expect(200)
     .then((response) => {
       const { topics } = response.body
+      expect(topics).toBeInstanceOf(Array)
       expect(topics).toHaveLength(3)
       topics.forEach((topic) => {
         expect(topic).toEqual(expected)
@@ -66,8 +67,8 @@ describe('GET /api/articles/:article_id', () => {
   })
 })
 
-describe.only('GET /api/articles', () => {
-  test('200: respond with array of article objects with all properties + comment_count', () => {
+describe('GET /api/articles', () => {
+  test('200: respond with an array of article objects with all article properties + comment_count', () => {
     const expected = 
     {
       article_id: expect.any(Number),
