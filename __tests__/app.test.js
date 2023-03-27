@@ -48,12 +48,31 @@ describe('GET /api/articles/:article_id', () => {
       expect(article).toEqual(expected)
     })
   })
-  test('404: respond with 404 not found if article of given id does not exist', () => {
+  test('404: respond with 404 article not found if article of given id does not exist', () => {
     return request(app).get('/api/articles/999999')
     .expect(404)
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('article not found')
+    })
+  })
+  test('400: respond with 400 bad request if given id is not a valid id', () => {
+    return request(app).get('/api/articles/not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+})
+
+describe('/*', () => {
+  test('404: respond with general 404 if endpoint does not exist', () => {
+    return request(app).get('/apu/artucals')
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('page not found')
     })
   })
 })
