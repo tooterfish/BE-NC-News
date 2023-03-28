@@ -329,7 +329,7 @@ describe('PATCH api/articles/:article_id', () => {
   })
 })
 
-describe.only('DELETE /api/comments/:comment_id', () => {
+describe('DELETE /api/comments/:comment_id', () => {
   test('should delete comment with comment_id from database', () => {
     return request(app).delete('/api/comments/1')
     .then(() => {
@@ -342,6 +342,22 @@ describe.only('DELETE /api/comments/:comment_id', () => {
   test('204: responds with 204 on successful deletion', () => {
     return request(app).delete('/api/comments/1')
     .expect(204)
+  })
+  test('400: responds with 400 if comment_id is not valid type', () => {
+    return request(app).delete('/api/comments/not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: responds with 404 if comment of given comment_id does not exist', () => {
+    return request(app).delete('/api/comments/999999')
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('comment not found')
+    })
   })
 })
 
