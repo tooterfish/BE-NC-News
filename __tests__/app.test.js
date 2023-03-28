@@ -5,6 +5,7 @@ const seed = require('../db/seeds/seed')
 const request = require('supertest')
 
 const app = require('../app')
+const { sort } = require('../db/data/test-data/articles')
 
 beforeEach(() => seed(data))
 afterAll(() => db.end())
@@ -94,8 +95,20 @@ describe('GET /api/articles', () => {
       })
       expect(expectedTotalComments).toBe(18)
     })
+  })
+  test('200: by default articles should be sorted by created_at in descending order', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      const sortedArticles = [...articles]
+      .sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at)
+      })
+      expect(articles).toEqual(sortedArticles)
+    })
   });
-});
+})
 
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
