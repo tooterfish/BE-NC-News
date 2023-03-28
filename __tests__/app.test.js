@@ -5,6 +5,7 @@ const seed = require('../db/seeds/seed')
 const request = require('supertest')
 
 const app = require('../app')
+const { sort } = require('../db/data/test-data/articles')
 
 beforeEach(() => seed(data))
 afterAll(() => db.end())
@@ -21,6 +22,7 @@ describe('GET /api/topics', () => {
     .expect(200)
     .then((response) => {
       const { topics } = response.body
+      expect(topics).toBeInstanceOf(Array)
       expect(topics).toHaveLength(3)
       topics.forEach((topic) => {
         expect(topic).toEqual(expected)
@@ -62,6 +64,44 @@ describe('GET /api/articles/:article_id', () => {
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('invalid input syntax')
+    })
+  })
+})
+
+describe('GET /api/articles', () => {
+  test('200: respond with an array of article objects with all article properties + comment_count', () => {
+    const expected = 
+    {
+      article_id: expect.any(Number),
+      title: expect.any(String),
+      topic: expect.any(String),
+      author: expect.any(String),
+      body: expect.any(String),
+      created_at: expect.any(String),
+      votes: expect.any(Number),
+      article_img_url: expect.any(String),
+      comment_count: expect.any(Number)
+    }
+    let expectedTotalComments = 0
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeInstanceOf(Array)
+      expect(articles).toHaveLength(12)
+      articles.forEach((article) => {
+        expect(article).toEqual(expected)
+        expectedTotalComments += article.comment_count
+      })
+      expect(expectedTotalComments).toBe(18)
+    })
+  })
+  test('200: by default articles should be sorted by created_at in descending order', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('created_at', { descending: true })
     })
   })
 })
