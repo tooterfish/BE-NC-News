@@ -1,4 +1,4 @@
-const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment } = require('../models/articles-models')
+const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment, updateArticleVotes } = require('../models/articles-models')
 
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params
@@ -38,5 +38,14 @@ exports.postCommentOnArticle = (req, res, next) => {
   })
   .catch((err) => {
     next(err)
+  })
+}
+
+exports.patchArticleVotes = (req, res, next) => {
+  const { article_id } = req.params
+  const { inc_votes } = req.body
+  updateArticleVotes(article_id, inc_votes)
+  .then((article) => {
+    res.status(200).send({ article })
   })
 }
