@@ -16,7 +16,6 @@ exports.fetchArticles = () => {
   ORDER BY created_at DESC
   `
   return db.query(queryStr).then((result) => {
-    console.log(result.rows)
     return result.rows
   })
 }
