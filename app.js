@@ -1,5 +1,5 @@
 const express = require('express')
-const { getArticle, getArticles, getCommentsByArticle, postCommentOnArticle } = require('./controllers/articles-controllers')
+const { getArticle, getArticles, getCommentsByArticle, postCommentOnArticle, patchArticleVotes } = require('./controllers/articles-controllers')
 const { getTopics } = require('./controllers/topics-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
 
@@ -9,8 +9,9 @@ app.use(express.json())
 
 app.get('/api/topics', getTopics)
 
-app.get('/api/articles/:article_id', getArticle)
 app.get('/api/articles', getArticles)
+app.get('/api/articles/:article_id', getArticle)
+app.patch('/api/articles/:article_id', patchArticleVotes)
 app.get('/api/articles/:article_id/comments', getCommentsByArticle)
 app.post('/api/articles/:article_id/comments', postCommentOnArticle)
 

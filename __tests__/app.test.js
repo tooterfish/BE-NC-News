@@ -235,6 +235,100 @@ describe('POST /api/articles/:article_id/comments', () => {
   })
 })
 
+describe('PATCH api/articles/:article_id', () => {
+  test('200: responds with given article with votes modified by inc_votes parameter', () => {
+    const body = {
+      inc_votes: 1
+    }
+    const expected = {
+      article_id: 1,
+      title: 'Living in the shadow of a great man',
+      topic: 'mitch',
+      author: 'butter_bridge',
+      body: 'I find this existence challenging',
+      created_at: '2020-07-09T20:11:00.000Z',
+      votes: 101,
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+    }
+    return request(app).patch('/api/articles/1')
+    .send(body)
+    .expect(200)
+    .then((response) => {
+      const { article } = response.body
+      expect(article).toEqual(expected)
+    })
+  })
+  test('200: responds with given article with votes modified by negative inc_votes parameter', () => {
+    const body = {
+      inc_votes: -101
+    }
+    const expected = {
+      article_id: 1,
+      title: 'Living in the shadow of a great man',
+      topic: 'mitch',
+      author: 'butter_bridge',
+      body: 'I find this existence challenging',
+      created_at: '2020-07-09T20:11:00.000Z',
+      votes: -1,
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+    }
+    return request(app).patch('/api/articles/1')
+    .send(body)
+    .expect(200)
+    .then((response) => {
+      const { article } = response.body
+      expect(article).toEqual(expected)
+    })
+  })
+  test('400: respond with 400 if article_id is invalid type', () => {
+    const body = {
+      inc_votes: 1
+    }
+    return request(app).patch('/api/articles/not-a-number')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: respond with 404 if article of given article_id does not exist', () => {
+    const body = {
+      inc_votes: 1
+    }
+    return request(app).patch('/api/articles/999999')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('article not found')
+    })
+  })
+  test('400: respond with 400 if request body does not have required properties', () => {
+    const body = {
+    }
+    return request(app).patch('/api/articles/1')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+  })
+  test('400: respond with 400 if inc_votes is incorrect type ', () => {
+    const body = {
+      inc_votes: 'not-a-number'
+    }
+    return request(app).patch('/api/articles/1')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+})
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')
