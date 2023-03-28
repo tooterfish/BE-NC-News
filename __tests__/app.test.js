@@ -183,6 +183,19 @@ describe('POST /api/articles/:article_id/comments', () => {
       expect(comment).toEqual(expected)
     })
   })
+  test('400: respond with 400 if given invalid article_id', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    return request(app).post('/api/articles/not-a-number/comments')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
   test('404: respond with 404 if article of given article_id does not exist', () => {
     const body = {
       username: 'icellusedkars',
