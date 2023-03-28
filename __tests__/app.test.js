@@ -209,6 +209,17 @@ describe('POST /api/articles/:article_id/comments', () => {
       expect(msg).toBe('key not present')
     })
   })
+  test.only('400: respond with 400 if request body does not have required properties', () => {
+    const body = {
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+  })
 })
 
 describe('/*', () => {

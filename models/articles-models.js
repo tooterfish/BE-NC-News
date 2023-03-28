@@ -42,6 +42,7 @@ exports.fetchCommentsByArticle = (articleId) => {
 }
 
 exports.createComment = (articleId, username, commentBody) => {
+  if (!(username || commentBody)) return Promise.reject({ status: 400, msg: 'invalid body properties' })
   const queryStr = `
   INSERT INTO comments
   (article_id, votes, author, body, created_at)
