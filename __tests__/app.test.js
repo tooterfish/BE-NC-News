@@ -329,6 +329,22 @@ describe('PATCH api/articles/:article_id', () => {
   })
 })
 
+describe.only('DELETE /api/comments/:comment_id', () => {
+  test('should delete comment with comment_id from database', () => {
+    return request(app).delete('/api/comments/1')
+    .then(() => {
+      db.query('SELECT FROM comments WHERE comment_id = 1')
+    .then((result) => {
+      expect(result.rows).toEqual([])
+      })
+    })
+  })
+  test('204: responds with 204 on successful deletion', () => {
+    return request(app).delete('/api/comments/1')
+    .expect(204)
+  })
+})
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')
