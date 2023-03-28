@@ -161,6 +161,32 @@ describe('GET /api/articles/:article_id/comments', () => {
   })
 })
 
+describe.only('POST /api/articles/:article_id/comments', () => {
+  test('201: ', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    const expected = {
+      comment_id: expect.any(Number),
+      body: 'That\'s what they want you to think!',
+      article_id: 2,
+      author: 'icellusedkars',
+      votes: 0,
+      created_at: expect.any(String)
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { comment } = response.body
+      console.log(comment)
+      expect(comment).toEqual(expected)
+    })
+  })
+  
+})
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')

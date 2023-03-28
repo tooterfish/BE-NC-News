@@ -40,3 +40,17 @@ exports.fetchCommentsByArticle = (articleId) => {
     else { return Promise.reject({ status:404, msg: 'article not found' }) }
   })
 }
+
+exports.createComment = (articleId, username, commentBody) => {
+  const queryStr = `
+  INSERT INTO comments
+  (article_id, votes, author, body, created_at)
+  VALUES
+  ($1, 0, $2, $3, NOW()::timestamp)
+  RETURNING *
+  `
+  return db.query(queryStr, [articleId, username, commentBody])
+  .then((result) => {
+    return result.rows[0]
+  })
+}
