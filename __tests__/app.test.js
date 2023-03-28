@@ -161,6 +161,80 @@ describe('GET /api/articles/:article_id/comments', () => {
   })
 })
 
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: respond with new comment object', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    const expected = {
+      comment_id: expect.any(Number),
+      body: 'That\'s what they want you to think!',
+      article_id: 2,
+      author: 'icellusedkars',
+      votes: 0,
+      created_at: expect.any(String)
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { comment } = response.body
+      expect(comment).toEqual(expected)
+    })
+  })
+  test('400: respond with 400 if given invalid article_id', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    return request(app).post('/api/articles/not-a-number/comments')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: respond with 404 if article of given article_id does not exist', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    return request(app).post('/api/articles/999999/comments')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key not present')
+    })
+  })
+  test('404: respond with 404 if user of given username does not exist', () => {
+    const body = {
+      username: 'socrates',
+      body: 'I drank what!?'
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key not present')
+    })
+  })
+  test('400: respond with 400 if request body does not have required properties', () => {
+    const body = {
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+  })
+})
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')
