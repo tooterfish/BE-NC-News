@@ -19,3 +19,17 @@ exports.fetchArticles = () => {
     return result.rows
   })
 }
+
+exports.fetchCommentsByArticle = (articleId) => {
+  const queryStr = `
+  SELECT comments.* FROM comments
+  JOIN articles ON comments.article_id = articles.article_id
+  WHERE comments.article_id = $1
+  ORDER BY created_at ASC
+  `
+
+  return db.query(queryStr, [ articleId ])
+  .then((result) => {
+    return result.rows
+  })
+}

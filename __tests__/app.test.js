@@ -106,6 +106,45 @@ describe('GET /api/articles', () => {
   })
 })
 
+describe.only('GET /api/articles/:article_id/comments', () => {
+  test('200: respond with array of comments for given article_id', () => {
+    const expected = {
+      comment_id: expect.any(Number),
+      votes: expect.any(Number),
+      created_at: expect.any(String),
+      author: expect.any(String),
+      body: expect.any(String),
+      article_id: expect.any(Number)
+    }
+    return request(app).get('/api/articles/1/comments')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      expect(comments).toBeInstanceOf(Array)
+      expect(comments).toHaveLength(11)
+      comments.forEach((comment) => {
+        expect(comment).toEqual(expected)
+      })
+    })
+  })
+  test('200: comments should be sorted with most recent comments first', () => {
+    return request(app).get('/api/articles/1/comments')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      expect(comments).toBeSortedBy('created_at', { descending: false })
+    })
+  })
+  test('200: respond with an empty array if article for given id has no comments', () => {
+    return request(app).get('/api/articles/4/comments')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      expect(comments).toEqual([])
+    })
+  });
+})
+
 describe('/*', () => {
   test('404: respond with general 404 if endpoint does not exist', () => {
     return request(app).get('/apu/artucals')

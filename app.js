@@ -1,5 +1,5 @@
 const express = require('express')
-const { getArticle, getArticles } = require('./controllers/articles-controllers')
+const { getArticle, getArticles, getCommentsByArticle } = require('./controllers/articles-controllers')
 const { getTopics } = require('./controllers/topics-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
 
@@ -11,6 +11,7 @@ app.get('/api/topics', getTopics)
 
 app.get('/api/articles/:article_id', getArticle)
 app.get('/api/articles', getArticles)
+app.get('/api/articles/:article_id/comments', getCommentsByArticle)
 
 app.use('/*', (req, res) => {
   res.status(404).send({ msg: 'page not found' })
