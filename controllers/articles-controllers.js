@@ -36,4 +36,7 @@ exports.postCommentOnArticle = (req, res, next) => {
   .then((comment) => {
     res.status(201).send({ comment })
   })
+  .catch((err) => {
+    next(err)
+  })
 }

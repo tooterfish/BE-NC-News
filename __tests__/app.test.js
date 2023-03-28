@@ -161,8 +161,8 @@ describe('GET /api/articles/:article_id/comments', () => {
   })
 })
 
-describe.only('POST /api/articles/:article_id/comments', () => {
-  test('201: ', () => {
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: respond with new comment object', () => {
     const body = {
       username: 'icellusedkars',
       body: 'That\'s what they want you to think!'
@@ -180,11 +180,35 @@ describe.only('POST /api/articles/:article_id/comments', () => {
     .expect(201)
     .then((response) => {
       const { comment } = response.body
-      console.log(comment)
       expect(comment).toEqual(expected)
     })
   })
-  
+  test('404: respond with 404 if article of given article_id does not exist', () => {
+    const body = {
+      username: 'icellusedkars',
+      body: 'That\'s what they want you to think!'
+    }
+    return request(app).post('/api/articles/999999/comments')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key not present')
+    })
+  })
+  test('404: respond with 404 if user of given username does not exist', () => {
+    const body = {
+      username: 'socrates',
+      body: 'I drank what!?'
+    }
+    return request(app).post('/api/articles/2/comments')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key not present')
+    })
+  })
 })
 
 describe('/*', () => {
