@@ -101,13 +101,9 @@ describe('GET /api/articles', () => {
     .expect(200)
     .then((response) => {
       const { articles } = response.body
-      const sortedArticles = [...articles]
-      .sort((a, b) => {
-        return new Date(b.created_at) - new Date(a.created_at)
-      })
-      expect(articles).toEqual(sortedArticles)
+      expect(articles).toBeSortedBy('created_at', { descending: true })
     })
-  });
+  })
 })
 
 describe('/*', () => {
