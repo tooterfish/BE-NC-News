@@ -106,7 +106,7 @@ describe('GET /api/articles', () => {
   })
 })
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
   test('200: respond with array of comments for given article_id', () => {
     const expected = {
       comment_id: expect.any(Number),
@@ -142,7 +142,23 @@ describe.only('GET /api/articles/:article_id/comments', () => {
       const { comments } = response.body
       expect(comments).toEqual([])
     })
-  });
+  })
+  test('400: respond with 400 bad request if given invalid article_id', () => {
+    return request(app).get('/api/articles/article/comments')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: respond with 404 not found if article for given id does not exist', () => {
+    return request(app).get('/api/articles/999999/comments')
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('article not found')
+    })
+  })
 })
 
 describe('/*', () => {
