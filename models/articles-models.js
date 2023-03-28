@@ -57,8 +57,7 @@ exports.createComment = (articleId, username, commentBody) => {
 }
 
 exports.updateArticleVotes = (articleId, incVotes) => {
-  console.log('in model')
-  console.log(articleId, incVotes, "<<<<<<<")
+  if (!incVotes) return Promise.reject({ status: 400, msg: 'invalid body properties' })
   const queryStr = `
   UPDATE articles
   SET votes = votes + $2
@@ -67,6 +66,7 @@ exports.updateArticleVotes = (articleId, incVotes) => {
   `
   return db.query(queryStr, [ articleId, incVotes ])
   .then((result) => {
-    return result.rows[0]
+    if(result.rows[0]) return result.rows[0]
+    else return Promise.reject({ status:404, msg: 'article not found' })
   })
 }
