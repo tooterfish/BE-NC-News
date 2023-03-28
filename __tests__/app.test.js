@@ -329,7 +329,7 @@ describe('PATCH api/articles/:article_id', () => {
   })
 })
 
-describe.only('GET /api/users', () => {
+describe('GET /api/users', () => {
   const expected = {
     username: expect.any(String),
     name: expect.any(String),
