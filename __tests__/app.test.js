@@ -347,6 +347,7 @@ describe('GET /api/users', () => {
       })
     })
   })
+})
 
 describe('DELETE /api/comments/:comment_id', () => {
   test('should delete comment with comment_id from database', () => {
@@ -378,7 +379,6 @@ describe('DELETE /api/comments/:comment_id', () => {
       expect(msg).toBe('comment not found')
     })
   })
-
 })
 
 describe('/*', () => {
