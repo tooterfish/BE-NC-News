@@ -19,3 +19,24 @@ exports.fetchArticles = () => {
     return result.rows
   })
 }
+
+exports.fetchCommentsByArticle = (articleId) => {
+  const commentQueryStr = `
+  SELECT comments.* FROM comments
+  JOIN articles ON comments.article_id = articles.article_id
+  WHERE comments.article_id = $1
+  ORDER BY created_at ASC
+  `
+  const articleQueryStr = `
+  SELECT * FROM articles
+  WHERE article_id = $1
+  `
+  //duplicating a tiny bit of code is better than tightly coupling two models imo
+  const promises = [db.query(articleQueryStr, [ articleId ]), db.query(commentQueryStr, [ articleId ])]
+  return Promise.all(promises)
+  .then((result) => {
+    const [ article, comments ] = result
+    if (article.rows[0]) { return comments.rows }
+    else { return Promise.reject({ status:404, msg: 'article not found' }) }
+  })
+}
