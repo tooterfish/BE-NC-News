@@ -5,7 +5,6 @@ const seed = require('../db/seeds/seed')
 const request = require('supertest')
 
 const app = require('../app')
-const { sort } = require('../db/data/test-data/articles')
 
 beforeEach(() => seed(data))
 afterAll(() => db.end())
@@ -31,7 +30,7 @@ describe('GET /api/topics', () => {
   })
 })
 
-describe.only('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
   test('200: respond with an article object corresponding with given id with all article properties + comment_count', () => {
     const expected = {
       article_id: 1,
