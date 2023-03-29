@@ -37,9 +37,6 @@ exports.fetchArticles = (topic, sortBy, order) => {
       })
     })
   }
-  
-  exports.fetchArticle = (articleId) => {
-    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId])
 
 exports.fetchArticle = (articleId) => {
   const queryStr = `
