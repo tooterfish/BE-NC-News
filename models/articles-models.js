@@ -6,10 +6,17 @@ exports.fetchArticles = (topic, sortBy, order) => {
   const allowedTopics = new Set(['mitch', 'cats', 'paper']) //cache this at startup and update everytime topic is posted or deleted?
   
   let topicQuery = ''
-  if (allowedTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
+  if (topic) {
+    if (allowedTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
+    else return Promise.reject({ status: 400, msg: 'invalid query: topic' })
+  }
   
-  if(!allowedSorts.has(sortBy)) sortBy = 'created_at'
-  if(!allowedOrder.has(order)) order = 'DESC'
+  if(sortBy && !allowedSorts.has(sortBy)) return Promise.reject({ status: 400, msg: 'invalid query: sort_by' })
+  if(!sortBy) sortBy = 'created_at'
+
+  if(order && !allowedOrder.has(order)) return Promise.reject({ status: 400, msg: 'invalid query: order' })
+  if (!order) order = 'DESC'
+
   const sortQuery = `${sortBy} ${order}`
 
   const queryStr = `

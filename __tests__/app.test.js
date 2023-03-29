@@ -114,12 +114,12 @@ describe('GET /api/articles', () => {
       })
     })
   })
-  test('200: if given topic is not in topics then default to no filter', () => {
+  test('400: respond with 400 bad request if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
-    .expect(200)
+    .expect(400)
     .then((response) => {
-      const { articles } = response.body
-      expect(articles).toHaveLength(12)
+      const { msg } = response.body
+      expect(msg).toBe('invalid query: topic')
     })
   })
   test('200: sort articles by given sort_by query', () => {
@@ -130,12 +130,12 @@ describe('GET /api/articles', () => {
       expect(articles).toBeSortedBy('title', { descending: true })
     })
   })
-  test('200: if given sort_by query is not valid sort articles by default created_at', () => {
+  test('400: respond with 400 if given sort_by query is not valid', () => {
     return request(app).get('/api/articles?sort_by=hammers')
-    .expect(200)
+    .expect(400)
     .then((response) => {
-      const { articles } = response.body
-      expect(articles).toBeSortedBy('created_at', { descending: true })
+      const { msg } = response.body
+      expect(msg).toBe('invalid query: sort_by')
     })
   })
   test('200: sort articles in order of given order query', () => {
@@ -146,12 +146,12 @@ describe('GET /api/articles', () => {
       expect(articles).toBeSortedBy('created_at', { descending: false })
     })
   })
-  test('200: if given order query not valid sort articles by default DESC order', () => {
+  test('400: respond with 400 if given order query not valid', () => {
     return request(app).get('/api/articles?order=TOP')
-    .expect(200)
+    .expect(400)
     .then((response) => {
-      const { articles } = response.body
-      expect(articles).toBeSortedBy('created_at', { descending: true })
+      const { msg } = response.body
+      expect(msg).toBe('invalid query: order')
     })
   })
 })
