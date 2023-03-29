@@ -7,10 +7,10 @@ const { handleErrors } = require('./controllers/error-controllers')
 
 
 const app = express()
+
 app.use(express.json())
 
 app.get('/api/topics', getTopics)
-
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticle)
 app.patch('/api/articles/:article_id', patchArticleVotes)

@@ -68,7 +68,7 @@ describe('GET /api/articles/:article_id', () => {
   })
 })
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
   test('200: respond with an array of article objects with all article properties + comment_count', () => {
     const expected = 
     {
@@ -98,6 +98,57 @@ describe('GET /api/articles', () => {
   })
   test('200: by default articles should be sorted by created_at in descending order', () => {
     return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('created_at', { descending: true })
+    })
+  })
+  test('200: filter articles by topic given in topic query', () => {
+    return request(app).get('/api/articles?topic=mitch')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(11)
+      articles.forEach((article) => {
+        expect(article.topic).toBe('mitch')
+      })
+    })
+  })
+  test('200: if given topic is not in topics then default to no filter', () => {
+    return request(app).get('/api/articles?topic=marmalade')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(12)
+    })
+  })
+  test('200: sort articles by given sort_by query', () => {
+    return request(app).get('/api/articles?sort_by=title')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('title', { descending: true })
+    })
+  })
+  test('200: if given sort_by query is not valid sort articles by default created_at', () => {
+    return request(app).get('/api/articles?sort_by=hammers')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('created_at', { descending: true })
+    })
+  })
+  test('200: sort articles in order of given order query', () => {
+    return request(app).get('/api/articles?order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('created_at', { descending: false })
+    })
+  })
+  test('200: if given order query not valid sort articles by default DESC order', () => {
+    return request(app).get('/api/articles?order=TOP')
     .expect(200)
     .then((response) => {
       const { articles } = response.body
