@@ -124,10 +124,10 @@ describe('GET /api/articles', () => {
   })
   test('400: respond with 400 bad request if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
-    .expect(400)
+    .expect(404)
     .then((response) => {
       const { msg } = response.body
-      expect(msg).toBe('invalid query: topic')
+      expect(msg).toBe('topic not found')
     })
   })
   test('200: sort articles by given sort_by query', () => {

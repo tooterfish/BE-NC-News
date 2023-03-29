@@ -12,7 +12,7 @@ exports.fetchArticles = (topic, sortBy, order) => {
     let topicQuery = ''
     if (topic) {
       if (allowedTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
-      else return Promise.reject({ status: 400, msg: 'invalid query: topic' })
+      else return Promise.reject({ status: 404, msg: 'topic not found' })
     }
     
     if(sortBy && !allowedSorts.has(sortBy)) return Promise.reject({ status: 400, msg: 'invalid query: sort_by' })
