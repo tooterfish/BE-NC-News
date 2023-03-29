@@ -112,6 +112,65 @@ describe('GET /api/articles', () => {
       expect(articles).toBeSortedBy('created_at', { descending: true })
     })
   })
+  test('200: filter articles by topic given in topic query', () => {
+    return request(app).get('/api/articles?topic=mitch')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(11)
+      articles.forEach((article) => {
+        expect(article.topic).toBe('mitch')
+      })
+    })
+  })
+  test('200: respond with empty array if given topic is valid but contains no articles', () => {
+    return request(app).get('/api/articles?topic=paper')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toEqual([])
+    })
+  })
+  test('400: respond with 400 bad request if given topic is not in topics', () => {
+    return request(app).get('/api/articles?topic=marmalade')
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('topic not found')
+    })
+  })
+  test('200: sort articles by given sort_by query', () => {
+    return request(app).get('/api/articles?sort_by=title')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('title', { descending: true })
+    })
+  })
+  test('400: respond with 400 if given sort_by query is not valid', () => {
+    return request(app).get('/api/articles?sort_by=hammers')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid query: sort_by')
+    })
+  })
+  test('200: sort articles in order of given order query', () => {
+    return request(app).get('/api/articles?order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toBeSortedBy('created_at', { descending: false })
+    })
+  })
+  test('400: respond with 400 if given order query not valid', () => {
+    return request(app).get('/api/articles?order=TOP')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid query: order')
+    })
+  })
 })
 
 describe('GET /api/articles/:article_id/comments', () => {

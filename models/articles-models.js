@@ -1,5 +1,46 @@
 const db = require('../db/connection')
 
+
+exports.fetchArticles = (topic, sortBy, order) => {
+  const allowedSorts = new Set(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'comment_count'])
+  const allowedOrder = new Set(['ASC', 'DESC'])
+  
+  return db.query('SELECT slug FROM topics')
+  .then((result) => {
+    return new Set (result.rows.map(topic => topic.slug))
+  })
+  .then((allowedTopics) => {    
+    let topicQuery = ''
+    if (topic) {
+      if (allowedTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
+      else return Promise.reject({ status: 404, msg: 'topic not found' })
+    }
+    
+    if(sortBy && !allowedSorts.has(sortBy)) return Promise.reject({ status: 400, msg: 'invalid query: sort_by' })
+    if(!sortBy) sortBy = 'created_at'
+    
+    if(order && !allowedOrder.has(order)) return Promise.reject({ status: 400, msg: 'invalid query: order' })
+    if (!order) order = 'DESC'
+    
+    const sortQuery = `${sortBy} ${order}`
+    
+    const queryStr = `
+    SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    ${topicQuery}
+    GROUP BY articles.article_id
+    ORDER BY ${sortQuery}
+    `
+    
+    return db.query(queryStr).then((result) => {
+      return result.rows
+      })
+    })
+  }
+  
+  exports.fetchArticle = (articleId) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId])
+
 exports.fetchArticle = (articleId) => {
   const queryStr = `
   SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
@@ -8,23 +49,12 @@ exports.fetchArticle = (articleId) => {
   GROUP BY articles.article_id
   `
   return db.query(queryStr, [articleId])
+
   .then((result) => {
     if (result.rows[0]) { return result.rows[0] }
     else { return Promise.reject({ status:404, msg: 'article not found' }) }
   }
 )}
-
-exports.fetchArticles = () => {
-  const queryStr = `
-  SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
-  LEFT JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY created_at DESC
-  `
-  return db.query(queryStr).then((result) => {
-    return result.rows
-  })
-}
 
 exports.fetchCommentsByArticle = (articleId) => {
   const commentQueryStr = `
