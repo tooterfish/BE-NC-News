@@ -114,6 +114,14 @@ describe('GET /api/articles', () => {
       })
     })
   })
+  test('200: respond with empty array if given topic is valid but contains no articles', () => {
+    return request(app).get('/api/articles?topic=paper')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toEqual([])
+    })
+  })
   test('400: respond with 400 bad request if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
     .expect(400)
