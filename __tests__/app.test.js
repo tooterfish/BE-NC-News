@@ -131,7 +131,7 @@ describe('GET /api/articles', () => {
       expect(articles).toEqual([])
     })
   })
-  test('404: respond with 404 bad request if given topic is not in topics', () => {
+  test('404: respond with 404 not found if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
     .expect(404)
     .then((response) => {
