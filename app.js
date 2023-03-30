@@ -1,12 +1,12 @@
 const express = require('express')
-const { getArticle, getArticles, getCommentsByArticle, postCommentOnArticle, patchArticleVotes } = require('./controllers/articles-controllers')
-const { getTopics } = require('./controllers/topics-controllers')
+// const { getArticle, getArticles, getCommentsByArticle, postCommentOnArticle, patchArticleVotes } = require('./controllers/articles-controllers')
+// const { getTopics } = require('./controllers/topics-controllers')
 // const { getUsers } = require('./controllers/users-controllers')
 const { deleteComment } = require('./controllers/comments-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
 const apiRouter = require('./routes/api-router')
 
-const endpoints = require('./endpoints.json')
+// const endpoints = require('./endpoints.json')
 
 const { pregenQueriesSets } = require('./app-utils')
 
@@ -16,7 +16,7 @@ pregenQueriesSets()
 const app = express()
 app.use(express.json())
 
-app.get('/api/topics', getTopics)
+// app.get('/api/topics', getTopics)
 
 // app.get('/api/articles', getArticles)
 // app.get('/api/articles/:article_id', getArticle)
