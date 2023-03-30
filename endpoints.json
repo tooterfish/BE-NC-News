@@ -9,6 +9,18 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "adds given topic to topics, serves up new topic object",
+    "queries": [],
+    "exampleBody": {
+      "description": "Just mucking around",
+      "slug": "gardening"
+    },
+    "exampleResponse": {
+      "description": "Just mucking around",
+      "slug": "gardening"
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["topic", "sort_by", "order"],
@@ -123,6 +135,15 @@
     "description": "Deletes comment of the given id",
     "queries": [],
     "exampleResponse": {
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "Serves up a user object of the given username",
+    "queries": [],
+    "exampleResponse": {
+      "username": "Ghengis",
+      "name": "Temujin",
+      "avatar_url": "http://www.iluvponies.com/acutehorsepicture.jpeg"
     }
   }
 }

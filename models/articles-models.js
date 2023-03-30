@@ -39,8 +39,8 @@ exports.fetchArticle = (articleId) => {
   return db.query(queryStr, [articleId])
 
   .then((result) => {
-    if (result.rows[0]) { return result.rows[0] }
-    else { return Promise.reject({ status:404, msg: 'article not found' }) }
+    if (result.rows[0]) return result.rows[0]
+    else return Promise.reject({ status:404, msg: 'article not found' })
   }
 )}
 
