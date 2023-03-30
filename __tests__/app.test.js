@@ -401,7 +401,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   })
 })
 
-describe('PATCH api/articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
   test('200: responds with given article with votes modified by inc_votes parameter', () => {
     const body = {
       inc_votes: 1
@@ -569,6 +569,99 @@ describe('DELETE /api/comments/:comment_id', () => {
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('comment not found')
+    })
+  })
+})
+
+describe.only('PATCH /api/comments/:comment_id', () => {
+  test('200: responds with given comment with votes modified by inc_votes parameter', () => {
+    const body = {
+      inc_votes: 1
+    }
+    const expected = {
+      comment_id: 1,
+      body: expect.any(String),
+      article_id: expect.any(Number),
+      author: expect.any(String),
+      votes: 17,
+      created_at: expect.any(String)
+    }
+    return request(app).patch('/api/comments/1')
+    .send(body)
+    .expect(200)
+    .then((response) => {
+      console.log(response.body)
+      const { comment } = response.body
+      expect(comment).toEqual(expected)
+    })
+  })
+  test('200: correctly decrements votes if given negative inc_votes', () => {
+    const body = {
+      inc_votes: -1
+    }
+    const expected = {
+      comment_id: 1,
+      body: expect.any(String),
+      article_id: expect.any(Number),
+      author: expect.any(String),
+      votes: 15,
+      created_at: expect.any(String)
+    }
+    return request(app).patch('/api/comments/1')
+    .send(body)
+    .expect(200)
+    .then((response) => {
+      console.log(response.body)
+      const { comment } = response.body
+      expect(comment).toEqual(expected)
+    })
+  })
+  test('400: respond with 400 if comment_id is invalid type', () => {
+    const body = {
+      inc_votes: 1
+    }
+    return request(app).patch('/api/comments/not-a-number')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: respond with 404 if comment of given comment_id does not exist', () => {
+    const body = {
+      inc_votes: 1
+    }
+    return request(app).patch('/api/comments/9999999')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('comment not found')
+    })
+  })
+  test('400: respond with 400 if request body does not have required properties', () => {
+    const body = {
+      increment_the_vote_please: 1
+    }
+    return request(app).patch('/api/comments/1')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+  })
+  test('400: respond with 400 if inc_votes is incorrect type', () => {
+    const body = {
+      inc_votes: 'not-a-number'
+    }
+    return request(app).patch('/api/comments/1')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
     })
   })
 })
