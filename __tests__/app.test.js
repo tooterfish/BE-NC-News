@@ -40,7 +40,7 @@ describe('GET /api/topics', () => {
   })
 })
 
-describe.only('POST /api/topics', () => {
+describe('POST /api/topics', () => {
   test('201: respond with new topic object', () => {
     const body = 
     {
@@ -349,14 +349,30 @@ describe('POST /api/articles/:article_id/comments', () => {
     })
   })
   test('400: respond with 400 if request body does not have required properties', () => {
-    const body = {
+    const body_1 = {
+    }
+    const body_2 = {
+      username: 'icellusedkars'
+    }
+    const body_3 = {
+      body: 'something something rest of owl'
     }
     return request(app).post('/api/articles/2/comments')
-    .send(body)
+    .send(body_1)
     .expect(400)
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('invalid body properties')
+    })
+    .then(() => {
+    return request(app).post('/api/articles/2/comments')
+    .send(body_2)
+    .expect(400)
+    })
+    .then(() => {
+    return request(app).post('/api/articles/2/comments')
+    .send(body_3)
+    .expect(400)
     })
   })
 })
