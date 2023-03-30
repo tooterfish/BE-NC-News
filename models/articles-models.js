@@ -29,6 +29,27 @@ exports.fetchArticles = (topic, sortBy, order) => {
   })
 }
 
+exports.createArticle = (author, title, body, topic, article_img_url) => {
+  const queryStr = `
+  WITH
+  inserted AS (
+    INSERT INTO articles
+    (author, title, body, topic, article_img_url)
+    VALUES
+    ($1, $2, $3, $4, $5)
+    RETURNING *
+  )
+  SELECT inserted.*, COUNT(comment_id)::int AS comment_count FROM inserted
+  LEFT JOIN comments ON comments.article_id = inserted.article_id
+  GROUP BY inserted.article_id, inserted.title, inserted.topic, inserted.author,
+  inserted.body, inserted.created_at, inserted.votes, inserted.article_img_url
+  ` //<<< must be a better way to do this?
+  return db.query(queryStr, [author, title, body, topic, article_img_url])
+  .then((result) => {
+    return result.rows[0]
+  })
+}
+
 exports.fetchArticle = (articleId) => {
   const queryStr = `
   SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
