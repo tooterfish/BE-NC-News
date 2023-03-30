@@ -515,6 +515,32 @@ describe('GET /api/users', () => {
   })
 })
 
+describe('GET /api/users/:username', () => {
+  test('200: respond with user object of given user name', () => {
+    const username = 'icellusedkars'
+    const expected = {
+      username: 'icellusedkars',
+      name: expect.any(String),
+      avatar_url: expect.any(String)
+    }
+    return request(app).get(`/api/users/${username}`)
+    .expect(200)
+    .then((response) => {
+      const { user } = response.body
+      expect(user).toEqual(expected)
+    })
+  })
+  test('404: respond with 404 not found when user of given username does not exist', () => {
+    const username = 'saladin'
+    return request(app).get(`/api/users/${username}`)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('user not found')
+    })
+  })
+})
+
 describe('DELETE /api/comments/:comment_id', () => {
   test('should delete comment with comment_id from database', () => {
     return request(app).delete('/api/comments/1')
