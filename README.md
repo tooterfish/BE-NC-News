@@ -17,6 +17,7 @@ To setup the project locally:
 - Set up the databases using ```npm run setup-dbs```
 - Seed the development database using ```npm run seed``` 
 
+**.env**\
 Project will look for enviromnent variables stored in the files ```.env.test``` and ```.env.development```. Add the lines ```PGDATABASE=nc_news_test``` and ```PGDATABASE=nc_news``` to each file respectively.
 
 To run local tests use ```ǹpm test```
