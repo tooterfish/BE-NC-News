@@ -2,7 +2,7 @@ const express = require('express')
 // const { getArticle, getArticles, getCommentsByArticle, postCommentOnArticle, patchArticleVotes } = require('./controllers/articles-controllers')
 // const { getTopics } = require('./controllers/topics-controllers')
 // const { getUsers } = require('./controllers/users-controllers')
-const { deleteComment } = require('./controllers/comments-controllers')
+// const { deleteComment } = require('./controllers/comments-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
 const apiRouter = require('./routes/api-router')
 
@@ -26,7 +26,7 @@ app.use(express.json())
 
 // app.get('/api/users', getUsers)
 
-app.delete('/api/comments/:comment_id', deleteComment)
+// app.delete('/api/comments/:comment_id', deleteComment)
 
 // app.get('/api', (req, res) => {
 //   res.status(200).send({ endpoints })
