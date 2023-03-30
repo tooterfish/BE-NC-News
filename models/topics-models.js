@@ -1,4 +1,5 @@
 const db = require('../db/connection')
+const { addAllowedArticleTopic } = require('../app-utils')
 
 exports.fetchTopics = () => {
   return db.query(`SELECT slug, description FROM topics`)
@@ -15,5 +16,8 @@ exports.createTopic = (description, slug) => {
   RETURNING *
   `
   return db.query(queryStr, [ description, slug ])
-  .then((result) => { return result.rows[0] })
+  .then((result) => { 
+    addAllowedArticleTopic(slug)
+    return result.rows[0]
+  })
 }
