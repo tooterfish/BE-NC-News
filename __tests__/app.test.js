@@ -40,6 +40,79 @@ describe('GET /api/topics', () => {
   })
 })
 
+describe('POST /api/topics', () => {
+  test('201: respond with new topic object', () => {
+    const body = {
+      description: 'It\'s all just mucking about really',
+      slug: 'gardening'
+    }
+    const expected = {
+      description: 'It\'s all just mucking about really',
+      slug: 'gardening'
+    }
+    return request(app).post('/api/topics')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { topic } = response.body
+      expect(topic).toEqual(expected)
+    })
+  })
+  test('400: respond with 400 if request body does not have the required properties', () => {
+    const body_1 = {}
+    const body_2 = {
+      description: 'a description'
+    }
+    const body_3 = {
+      slug: 'a slug'
+    }
+    return request(app).post('/api/topics')
+    .send(body_1)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+    .then(() => {
+    return request(app).post('/api/topics')
+    .send(body_2)
+    .expect(400)
+    })
+    .then(() => {
+    return request(app).post('/api/topics')
+    .send(body_3)
+    .expect(400)
+    })
+  })
+  test('400: respond with 400 if topic already exists', () => {
+    const body = {
+      description: 'doesn\'t matter',
+      slug: 'mitch'
+    }
+    return request(app).post('/api/topics')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key already exists')
+    })
+  })
+  test('newly posted topic should be added to allowed topics set', () => {
+    const body = {
+      description: 'A load of old rubbish!',
+      slug: 'nostalgia'
+    }
+    return request(app).post('/api/topics')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { slug } = response.body.topic
+      return request(app).get(`/api/articles?topic=${slug}`)
+      .expect(200)
+    })
+  })
+})
+
 describe('GET /api/articles/:article_id', () => {
   test('200: respond with an article object corresponding with given id with all article properties + comment_count', () => {
     const expected = {
@@ -300,14 +373,30 @@ describe('POST /api/articles/:article_id/comments', () => {
     })
   })
   test('400: respond with 400 if request body does not have required properties', () => {
-    const body = {
+    const body_1 = {
+    }
+    const body_2 = {
+      username: 'icellusedkars'
+    }
+    const body_3 = {
+      body: 'something something rest of owl'
     }
     return request(app).post('/api/articles/2/comments')
-    .send(body)
+    .send(body_1)
     .expect(400)
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('invalid body properties')
+    })
+    .then(() => {
+    return request(app).post('/api/articles/2/comments')
+    .send(body_2)
+    .expect(400)
+    })
+    .then(() => {
+    return request(app).post('/api/articles/2/comments')
+    .send(body_3)
+    .expect(400)
     })
   })
 })
