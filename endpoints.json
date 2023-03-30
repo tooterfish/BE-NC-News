@@ -29,7 +29,7 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves up a json representation of an article",
+    "description": "serves up article of given id",
     "queries": [],
     "exampleResponse": {
       "article": {
@@ -46,7 +46,7 @@
     }
   },
   "PATCH /api/articles/:article_id": {
-    "description": "updates an article's votes and serves up a json representation of the article",
+    "description": "update votes of article of given id and serves up the updated article",
     "queries": [],
     "exampleBody": { "inc_votes": 1 },
     "exampleResponse": {
@@ -88,7 +88,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "POSTs a comment into an article's comments and serves up a JSON representation of the posted comment",
+    "description": "POSTs a comment onlo the article of given id and serves up the posted comment",
     "queries": [],
     "exampleBody": {
       "username": "icellusedkars",
@@ -120,7 +120,7 @@
     }
   },
   "DELETE /api/comments/:comment_id": {
-    "description": "Deletes comment of given id",
+    "description": "Deletes comment of the given id",
     "queries": [],
     "exampleResponse": {
     }
