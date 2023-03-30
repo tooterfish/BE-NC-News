@@ -573,7 +573,7 @@ describe('DELETE /api/comments/:comment_id', () => {
   })
 })
 
-describe.only('PATCH /api/comments/:comment_id', () => {
+describe('PATCH /api/comments/:comment_id', () => {
   test('200: responds with given comment with votes modified by inc_votes parameter', () => {
     const body = {
       inc_votes: 1
@@ -590,7 +590,6 @@ describe.only('PATCH /api/comments/:comment_id', () => {
     .send(body)
     .expect(200)
     .then((response) => {
-      console.log(response.body)
       const { comment } = response.body
       expect(comment).toEqual(expected)
     })
@@ -611,7 +610,6 @@ describe.only('PATCH /api/comments/:comment_id', () => {
     .send(body)
     .expect(200)
     .then((response) => {
-      console.log(response.body)
       const { comment } = response.body
       expect(comment).toEqual(expected)
     })
