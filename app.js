@@ -4,10 +4,11 @@ const { getTopics } = require('./controllers/topics-controllers')
 const { getUsers } = require('./controllers/users-controllers')
 const { deleteComment } = require('./controllers/comments-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
+const { pregenQueriesSets } = require('./app-utils')
 
+pregenQueriesSets()
 
 const app = express()
-
 app.use(express.json())
 
 app.get('/api/topics', getTopics)
