@@ -4,6 +4,7 @@ const { getTopics } = require('./controllers/topics-controllers')
 const { getUsers } = require('./controllers/users-controllers')
 const { deleteComment } = require('./controllers/comments-controllers')
 const { handleErrors } = require('./controllers/error-controllers')
+const apiRouter = require('./routes/api-router')
 
 const endpoints = require('./endpoints.json')
 
@@ -26,9 +27,11 @@ app.get('/api/users', getUsers)
 
 app.delete('/api/comments/:comment_id', deleteComment)
 
-app.get('/api', (req, res) => {
-  res.status(200).send({ endpoints })
-})
+// app.get('/api', (req, res) => {
+//   res.status(200).send({ endpoints })
+// })
+
+app.use('/api', apiRouter)
 
 app.use('/*', (req, res) => {
   res.status(404).send({ msg: 'page not found' })
