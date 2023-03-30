@@ -8,7 +8,6 @@ exports.getTopics = (req, res, next) => {
 }
 
 exports.postNewTopic = (req, res, next) => {
-  console.log(req.body)
   const { description, slug } = req.body
   createTopic(description, slug)
   .then((topic) => {
