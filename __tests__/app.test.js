@@ -40,6 +40,55 @@ describe('GET /api/topics', () => {
   })
 })
 
+describe.only('POST /api/topics', () => {
+  test('201: respond with new topic object', () => {
+    const body = 
+    {
+    description: 'It\'s all just mucking about really',
+    slug: 'gardening'
+    }
+    const expected =
+    {
+    description: 'It\'s all just mucking about really',
+    slug: 'gardening'
+    }
+    return request(app).post('/api/topics')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { topic } = response.body
+      expect(topic).toEqual(expected)
+    })
+  })
+  test('400: respond with 400 if request body does not have the required properties', () => {
+    const body_1 = {
+    }
+    const body_2 = {
+      description: 'a description'
+    }
+    const body_3 = {
+      slug: 'a slug'
+    }
+    return request(app).post('/api/topics')
+    .send(body_1)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+    .then(() => {
+    return request(app).post('/api/topics')
+    .send(body_2)
+    .expect(400)
+    })
+    .then(() => {
+    return request(app).post('/api/topics')
+    .send(body_3)
+    .expect(400)
+    })
+  })
+})
+
 describe('GET /api/articles/:article_id', () => {
   test('200: respond with an article object corresponding with given id with all article properties + comment_count', () => {
     const expected = {
