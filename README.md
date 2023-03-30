@@ -1,4 +1,6 @@
-Project will look for enviromnent variables stored in the files .env.test and .env.development. Use .env-example as a template when setting up your project.
+#NC News
+
+"Project will look for enviromnent variables stored in the files .env.test and .env.development. Use .env-example as a template when setting up your project.
 
 To setup the test/development databases use npm run setup-dbs
 To seed the development database use npm run seed
