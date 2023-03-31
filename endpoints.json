@@ -150,8 +150,7 @@
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes comment of the given id",
     "queries": [],
-    "exampleResponse": {
-    }
+    "exampleResponse": {}
   },
   "GET /api/users/:username": {
     "description": "Serves up a user object of the given username",
@@ -161,5 +160,10 @@
       "name": "Temujin",
       "avatar_url": "http://www.iluvponies.com/acutehorsepicture.jpeg"
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes article of given id",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
