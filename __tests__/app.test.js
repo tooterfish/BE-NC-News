@@ -222,6 +222,14 @@ describe.only('GET /api/articles', () => {
       expect(articles).toHaveLength(5)
     })
   })
+  test('200: limit should default to 10', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(10)
+    })
+  })
   test('404: respond with 404 not found if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
     .expect(404)
