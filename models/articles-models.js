@@ -1,7 +1,8 @@
 const db = require('../db/connection')
 const { qs } = require('../app-utils')
 
-exports.fetchArticles = (topic, sortBy, order) => {
+exports.fetchArticles = (topic, sortBy, order, limit = 10, page = 1) => {
+  const offset = (page - 1) * limit
   let topicQuery = ''
   if (topic) {
     if (qs.allowedArticleTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
@@ -17,14 +18,14 @@ exports.fetchArticles = (topic, sortBy, order) => {
   const sortQuery = `${sortBy} ${order}`
   
   const queryStr = `
-  SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
+  SELECT COUNT(articles.*) OVER()::int AS total_count, articles.*, COUNT(comment_id)::int AS comment_count FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   ${topicQuery}
   GROUP BY articles.article_id
   ORDER BY ${sortQuery}
+  LIMIT $1 OFFSET $2
   `
-  
-  return db.query(queryStr).then((result) => {
+  return db.query(queryStr, [ limit, offset ]).then((result) => {
     return result.rows
   })
 }

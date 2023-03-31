@@ -174,7 +174,7 @@ describe('GET /api/articles', () => {
       comment_count: expect.any(Number)
     }
     let expectedTotalComments = 0
-    return request(app).get('/api/articles')
+    return request(app).get('/api/articles?limit=20')
     .expect(200)
     .then((response) => {
       const { articles } = response.body
@@ -196,7 +196,7 @@ describe('GET /api/articles', () => {
     })
   })
   test('200: filter articles by topic given in topic query', () => {
-    return request(app).get('/api/articles?topic=mitch')
+    return request(app).get('/api/articles?topic=mitch&limit=20')
     .expect(200)
     .then((response) => {
       const { articles } = response.body
@@ -212,6 +212,92 @@ describe('GET /api/articles', () => {
     .then((response) => {
       const { articles } = response.body
       expect(articles).toEqual([])
+    })
+  })
+  test('200: limit returned rows to number given in limit query', () => {
+    return request(app).get('/api/articles?limit=5')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(5)
+    })
+  })
+  test('200: limit should default to 10', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(10)
+    })
+  })
+  test('400: respond with 400 if given limit query is not valid', () => {
+    return request(app).get('/api/articles?limit=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('200: respond with page given by p', () => {
+    return request(app).get('/api/articles?limit=5&p=1&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 1;
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+    })
+    .then(() =>{
+    return request(app).get('/api/articles?limit=5&p=2&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 6
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+      })
+    })
+  })
+  test('200: p should default to 1', () => {
+    return request(app).get('/api/articles?limit=5&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 1;
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+    })
+  })
+  test('400: respond with 400 if p is invalid type', () => {
+    return request(app).get('/api/articles?limit=5&sort_by=article_id&order=ASC&p=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('200: response should include total number of articles no matter the pagination', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles, total_count } = response.body
+      expect(articles).toHaveLength(10)
+      expect(total_count).toBe(12)
+    })
+  })
+  test('200: response should include correct total number of articles when filtered by topic', () => {
+    return request(app).get('/api/articles?topic=mitch')
+    .expect(200)
+    .then((response) => {
+      const { articles, total_count } = response.body
+      expect(articles).toHaveLength(10)
+      expect(total_count).toBe(11)
     })
   })
   test('404: respond with 404 not found if given topic is not in topics', () => {

@@ -1,3 +1,4 @@
+const { forEach } = require('../db/data/test-data/articles')
 const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment, updateArticleVotes, createArticle } = require('../models/articles-models')
 
 exports.getArticle = (req, res, next) => {
@@ -23,10 +24,16 @@ exports.postArticle = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query
-  fetchArticles(topic, sort_by, order)
+  const { topic, sort_by, order, limit, p } = req.query
+  fetchArticles(topic, sort_by, order, limit, p)
   .then((articles) => {
-    res.status(200).send({ articles })
+    
+    let total_count = 0
+    if (articles.length !== 0) { 
+      total_count = articles[0].total_count
+      articles.forEach(article => delete article.total_count)
+    }
+    res.status(200).send({ articles, total_count })
   })
   .catch((err) => {
     next(err)
