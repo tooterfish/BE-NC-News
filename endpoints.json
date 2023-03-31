@@ -78,7 +78,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves up an array of comments for a given article ordered newest first",
-    "queries": [],
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [ 
         { 
