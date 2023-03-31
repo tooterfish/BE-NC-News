@@ -23,8 +23,8 @@ exports.postArticle = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order, limit } = req.query
-  fetchArticles(topic, sort_by, order, limit)
+  const { topic, sort_by, order, limit, p } = req.query
+  fetchArticles(topic, sort_by, order, limit, p)
   .then((articles) => {
     res.status(200).send({ articles })
   })

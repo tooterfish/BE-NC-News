@@ -230,6 +230,58 @@ describe.only('GET /api/articles', () => {
       expect(articles).toHaveLength(10)
     })
   })
+  test('400: respond with 400 if given limit query is not valid', () => {
+    return request(app).get('/api/articles?limit=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('200: respond with page given by p', () => {
+    return request(app).get('/api/articles?limit=5&p=1&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 1;
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+    })
+    .then(() =>{
+    return request(app).get('/api/articles?limit=5&p=2&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 6
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+      })
+    })
+  })
+  test('200: p should default to 1', () => {
+    return request(app).get('/api/articles?limit=5&sort_by=article_id&order=ASC')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      let i = 1;
+      articles.forEach((article) => {
+        expect(article.article_id).toBe(i)
+        i++
+      })
+    })
+  })
+  test('400: respond with 400 if p is invalid type', () => {
+    return request(app).get('/api/articles?limit=5&sort_by=article_id&order=ASC&p=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
   test('404: respond with 404 not found if given topic is not in topics', () => {
     return request(app).get('/api/articles?topic=marmalade')
     .expect(404)

@@ -1,7 +1,8 @@
 const db = require('../db/connection')
 const { qs } = require('../app-utils')
 
-exports.fetchArticles = (topic, sortBy, order, limit = 10) => {
+exports.fetchArticles = (topic, sortBy, order, limit = 10, page = 1) => {
+  const offset = (page - 1) * limit
   let topicQuery = ''
   if (topic) {
     if (qs.allowedArticleTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
@@ -22,10 +23,9 @@ exports.fetchArticles = (topic, sortBy, order, limit = 10) => {
   ${topicQuery}
   GROUP BY articles.article_id
   ORDER BY ${sortQuery}
-  LIMIT $1
+  LIMIT $1 OFFSET $2
   `
-  
-  return db.query(queryStr, [limit]).then((result) => {
+  return db.query(queryStr, [ limit, offset ]).then((result) => {
     return result.rows
   })
 }
