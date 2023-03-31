@@ -1,7 +1,7 @@
 const db = require('../db/connection')
 const { qs } = require('../app-utils')
 
-exports.fetchArticles = (topic, sortBy, order) => {
+exports.fetchArticles = (topic, sortBy, order, limit = 10) => {
   let topicQuery = ''
   if (topic) {
     if (qs.allowedArticleTopics.has(topic)) topicQuery = `WHERE topic = '${topic}'`
@@ -22,9 +22,10 @@ exports.fetchArticles = (topic, sortBy, order) => {
   ${topicQuery}
   GROUP BY articles.article_id
   ORDER BY ${sortQuery}
+  LIMIT $1
   `
   
-  return db.query(queryStr).then((result) => {
+  return db.query(queryStr, [limit]).then((result) => {
     return result.rows
   })
 }

@@ -159,7 +159,7 @@ describe('GET /api/articles/:article_id', () => {
   })
 })
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
   test('200: respond with an array of article objects with all article properties + comment_count', () => {
     const expected = 
     {
@@ -174,7 +174,7 @@ describe('GET /api/articles', () => {
       comment_count: expect.any(Number)
     }
     let expectedTotalComments = 0
-    return request(app).get('/api/articles')
+    return request(app).get('/api/articles?limit=20')
     .expect(200)
     .then((response) => {
       const { articles } = response.body
@@ -196,7 +196,7 @@ describe('GET /api/articles', () => {
     })
   })
   test('200: filter articles by topic given in topic query', () => {
-    return request(app).get('/api/articles?topic=mitch')
+    return request(app).get('/api/articles?topic=mitch&limit=20')
     .expect(200)
     .then((response) => {
       const { articles } = response.body
@@ -212,6 +212,14 @@ describe('GET /api/articles', () => {
     .then((response) => {
       const { articles } = response.body
       expect(articles).toEqual([])
+    })
+  })
+  test('200: limit returned rows to number given in limit query', () => {
+    return request(app).get('/api/articles?limit=5')
+    .expect(200)
+    .then((response) => {
+      const { articles } = response.body
+      expect(articles).toHaveLength(5)
     })
   })
   test('404: respond with 404 not found if given topic is not in topics', () => {
