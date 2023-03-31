@@ -256,6 +256,36 @@ describe('GET /api/articles', () => {
   })
 })
 
+describe.only('POST /api/articles', () => {
+  test('201: respond with 201 and posted article object', () => {
+    const body = {
+      author: 'icellusedkars',
+      title: 'TITLE',
+      body: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'mitch',
+      article_img_url: 'http://www.pictures.com/a-picture.jpeg'
+    }
+    const expected = {
+      article_id: expect.any(Number),
+      author: 'icellusedkars',
+      title: 'TITLE',
+      body: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'mitch',
+      article_img_url: 'http://www.pictures.com/a-picture.jpeg',
+      votes: 0,
+      created_at: expect.any(String),
+      comment_count: expect.any(Number)
+    }
+    return request(app).post('/api/articles')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { article } = response.body
+      expect(article).toEqual(expected)
+    })
+  })
+})
+
 describe('GET /api/articles/:article_id/comments', () => {
   test('200: respond with array of comments for given article_id', () => {
     const expected = {
