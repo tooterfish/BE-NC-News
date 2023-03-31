@@ -441,7 +441,7 @@ describe('POST /api/articles', () => {
   })
 })
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
   test('200: respond with array of comments for given article_id', () => {
     const expected = {
       comment_id: expect.any(Number),
@@ -484,6 +484,56 @@ describe.only('GET /api/articles/:article_id/comments', () => {
     .then((response) => {
       const { comments } = response.body
       expect(comments).toHaveLength(5)
+    })
+  })
+  test('200: limit should default to 10', () => {
+    return request(app).get('/api/articles/1/comments')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      expect(comments).toHaveLength(10)
+    })
+  })
+  test('400: respond with 400 if limit is not valid type', () => {
+    return request(app).get('/api/articles/1/comments?limit=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('200: respond with page given by p', () => {
+    return request(app).get('/api/articles/1/comments?limit=5&p=1')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      let lastDate = new Date(comments[0].created_at)
+      for (let i = 1; i < comments.length; i++) {
+        const currDate = new Date(comments[i].created_at)
+        expect(currDate > lastDate).toBe(true)
+        lastDate = currDate
+      }
+    })
+    .then(() => {
+    return request(app).get('/api/articles/1/comments?limit=5&p=2')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      let lastDate = new Date(comments[0].created_at)
+      for (let i = 1; i < comments.length; i++) {
+        const currDate = new Date(comments[i].created_at)
+        expect(currDate > lastDate).toBe(true)
+        lastDate = currDate
+      }
+    })
+    })
+  })
+  test('400: respond with 400 if p is not valid type', () => {
+    return request(app).get('/api/articles/1/comments?limit=5&p=not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
     })
   })
   test('400: respond with 400 bad request if given invalid article_id', () => {
