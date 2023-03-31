@@ -30,13 +30,30 @@ exports.fetchArticles = (topic, sortBy, order) => {
 }
 
 exports.createArticle = (author, title, body, topic, article_img_url) => {
+  const queryParams = [author, title, body, topic]
+  // check that needed parameters exist
+  for(const param of queryParams) {
+    if (!param) return Promise.reject({ status: 400, msg: 'invalid body properties' })
+  }
+  
+  // check topic exists
+  if (!qs.allowedArticleTopics.has(topic)) return Promise.reject({ status: 404, msg: 'topic not found' })
+  
+  // modify query depending on existence of article_img_url
+  let a = ')'
+  let b = ')'
+  if (article_img_url) {
+    a = ', article_img_url)'
+    b = ', $5)'
+    queryParams.push(article_img_url)
+  }
   const queryStr = `
   WITH
   inserted AS (
     INSERT INTO articles
-    (author, title, body, topic, article_img_url)
+    (author, title, body, topic${a}
     VALUES
-    ($1, $2, $3, $4, $5)
+    ($1, $2, $3, $4${b}
     RETURNING *
   )
   SELECT inserted.*, COUNT(comment_id)::int AS comment_count FROM inserted
@@ -44,7 +61,7 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
   GROUP BY inserted.article_id, inserted.title, inserted.topic, inserted.author,
   inserted.body, inserted.created_at, inserted.votes, inserted.article_img_url
   ` //<<< must be a better way to do this?
-  return db.query(queryStr, [author, title, body, topic, article_img_url])
+  return db.query(queryStr, queryParams)
   .then((result) => {
     return result.rows[0]
   })

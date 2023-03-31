@@ -256,7 +256,7 @@ describe('GET /api/articles', () => {
   })
 })
 
-describe.only('POST /api/articles', () => {
+describe('POST /api/articles', () => {
   test('201: respond with 201 and posted article object', () => {
     const body = {
       author: 'icellusedkars',
@@ -282,6 +282,75 @@ describe.only('POST /api/articles', () => {
     .then((response) => {
       const { article } = response.body
       expect(article).toEqual(expected)
+    })
+  })
+  test('201: if given no article_img_url use database default value', () => {
+    const body = {
+      author: 'icellusedkars',
+      title: 'TITLE',
+      body: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'mitch',
+    }
+    const expected = 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
+    return request(app).post('/api/articles')
+    .send(body)
+    .expect(201)
+    .then((response) => {
+      const { article } = response.body
+      expect(article.article_img_url).toBe(expected)
+    })
+  })
+  test('400: respond with 400 if post body missing required parameters', () => {
+    const body_1 = {}
+    const body_2 = {
+      author: 'icellusedkars',
+      title: "A title",
+      budy: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'mitch'
+    }
+    return request(app).post('/api/articles')
+    .send(body_1)
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid body properties')
+    })
+    .then(() => {
+    return request(app).post('/api/articles')
+    .send(body_2)
+    .expect(400)
+    })
+  })
+  test('404: respond with 404 if given topic does not exist', () => {
+    const body = {
+      author: 'icellusedkars',
+      title: 'TITLE',
+      body: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'brunch',
+      article_img_url: 'http://www.pictures.com/a-picture.jpeg'
+    }
+    return request(app).post('/api/articles')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('topic not found')
+    })
+  })
+  test('404: respond with 404 is given user does not exist', () => {
+    const body = {
+      author: 'hammurabi',
+      title: 'TITLE',
+      body: 'Lets wax lyrical about some nonsense shall we?',
+      topic: 'mitch',
+      article_img_url: 'http://www.pictures.com/a-picture.jpeg'
+    }
+    return request(app).post('/api/articles')
+    .send(body)
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('key not present')
     })
   })
 })
