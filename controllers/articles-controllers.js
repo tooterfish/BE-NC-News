@@ -1,5 +1,5 @@
 const { forEach } = require('../db/data/test-data/articles')
-const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment, updateArticleVotes, createArticle } = require('../models/articles-models')
+const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment, updateArticleVotes, createArticle, removeArticle } = require('../models/articles-models')
 
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params
@@ -70,6 +70,16 @@ exports.patchArticleVotes = (req, res, next) => {
   updateArticleVotes(article_id, inc_votes)
   .then((article) => {
     res.status(200).send({ article })
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params
+  removeArticle(article_id).then(() => {
+    res.status(204).send()
   })
   .catch((err) => {
     next(err)

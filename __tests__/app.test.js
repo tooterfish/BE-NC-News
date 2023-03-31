@@ -788,7 +788,7 @@ describe('DELETE /api/comments/:comment_id', () => {
   test('should delete comment with comment_id from database', () => {
     return request(app).delete('/api/comments/1')
     .then(() => {
-      db.query('SELECT FROM comments WHERE comment_id = 1')
+      return db.query('SELECT * FROM comments WHERE comment_id = 1')
     .then((result) => {
       expect(result.rows).toEqual([])
       })
@@ -812,6 +812,38 @@ describe('DELETE /api/comments/:comment_id', () => {
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('comment not found')
+    })
+  })
+})
+
+describe('DELETE /api/articles/:article_id', () => {
+  test('should delete article with article_id from database', () => {
+    return request(app).delete('/api/articles/1')
+    .then(() => {
+      return db.query('SELECT * FROM articles WHERE article_id = 1')
+      .then((result) => {
+        expect(result.rows).toEqual([])
+      })
+    })
+  })
+  test('204: responds with 204', () => {
+    return request(app).delete('/api/articles/1')
+    .expect(204) 
+  })
+  test('400: responds with 400 if comment_id is not valid type', () => {
+    return request(app).delete('/api/articles/not-a-number')
+    .expect(400)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('404: responds with 404 if article of given article_id does not exist', () => {
+    return request(app).delete('/api/articles/999999')
+    .expect(404)
+    .then((response) => {
+      const { msg } = response.body
+      expect(msg).toBe('article not found')
     })
   })
 })
