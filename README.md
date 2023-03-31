@@ -6,7 +6,7 @@ https://nc-news-1jvx.onrender.com/api/
 ## Project Summary
 NC News is a simple web api allowing users to read, post and comment on news articles.
 
-Created as part of the Northcoder's web development bootcamp, it serves as a portfolio project to demonstrate skills and understanding of building a backend web api using node and postgres.
+Created as part of the Northcoders web development bootcamp, it serves as a portfolio project to demonstrate skills and understanding of building a backend web api using node and postgres.
 
 ### Setup
 *Built with: Node v19.7.0, Postgres 14.7*
