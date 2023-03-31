@@ -441,7 +441,7 @@ describe('POST /api/articles', () => {
   })
 })
 
-describe('GET /api/articles/:article_id/comments', () => {
+describe.only('GET /api/articles/:article_id/comments', () => {
   test('200: respond with array of comments for given article_id', () => {
     const expected = {
       comment_id: expect.any(Number),
@@ -451,7 +451,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       body: expect.any(String),
       article_id: expect.any(Number)
     }
-    return request(app).get('/api/articles/1/comments')
+    return request(app).get('/api/articles/1/comments?limit=20')
     .expect(200)
     .then((response) => {
       const { comments } = response.body
@@ -476,6 +476,14 @@ describe('GET /api/articles/:article_id/comments', () => {
     .then((response) => {
       const { comments } = response.body
       expect(comments).toEqual([])
+    })
+  })
+  test('200: limit number of returned rows to given limit query', () => {
+    return request(app).get('/api/articles/1/comments?limit=5')
+    .expect(200)
+    .then((response) => {
+      const { comments } = response.body
+      expect(comments).toHaveLength(5)
     })
   })
   test('400: respond with 400 bad request if given invalid article_id', () => {

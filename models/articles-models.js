@@ -83,19 +83,21 @@ exports.fetchArticle = (articleId) => {
   }
 )}
 
-exports.fetchCommentsByArticle = (articleId) => {
+exports.fetchCommentsByArticle = (articleId, limit = 10, page = 1) => {
+  let offset = (page - 1) * limit
   const commentQueryStr = `
   SELECT comments.* FROM comments
   JOIN articles ON comments.article_id = articles.article_id
   WHERE comments.article_id = $1
   ORDER BY created_at ASC
+  LIMIT $2 OFFSET $3
   `
   const articleQueryStr = `
   SELECT * FROM articles
   WHERE article_id = $1
   `
   //duplicating a tiny bit of code is better than tightly coupling two models imo
-  const promises = [db.query(articleQueryStr, [ articleId ]), db.query(commentQueryStr, [ articleId ])]
+  const promises = [db.query(articleQueryStr, [ articleId ]), db.query(commentQueryStr, [ articleId, limit, offset ])]
   return Promise.all(promises)
   .then((result) => {
     const [ article, comments ] = result
