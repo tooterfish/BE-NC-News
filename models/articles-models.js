@@ -18,7 +18,7 @@ exports.fetchArticles = (topic, sortBy, order, limit = 10, page = 1) => {
   const sortQuery = `${sortBy} ${order}`
   
   const queryStr = `
-  SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles
+  SELECT COUNT(articles.*) OVER()::int AS total_count, articles.*, COUNT(comment_id)::int AS comment_count FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   ${topicQuery}
   GROUP BY articles.article_id

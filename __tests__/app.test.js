@@ -159,7 +159,7 @@ describe('GET /api/articles/:article_id', () => {
   })
 })
 
-describe.only('GET /api/articles', () => {
+describe('GET /api/articles', () => {
   test('200: respond with an array of article objects with all article properties + comment_count', () => {
     const expected = 
     {
@@ -280,6 +280,24 @@ describe.only('GET /api/articles', () => {
     .then((response) => {
       const { msg } = response.body
       expect(msg).toBe('invalid input syntax')
+    })
+  })
+  test('200: response should include total number of articles no matter the pagination', () => {
+    return request(app).get('/api/articles')
+    .expect(200)
+    .then((response) => {
+      const { articles, total_count } = response.body
+      expect(articles).toHaveLength(10)
+      expect(total_count).toBe(12)
+    })
+  })
+  test('200: response should include correct total number of articles when filtered by topic', () => {
+    return request(app).get('/api/articles?topic=mitch')
+    .expect(200)
+    .then((response) => {
+      const { articles, total_count } = response.body
+      expect(articles).toHaveLength(10)
+      expect(total_count).toBe(11)
     })
   })
   test('404: respond with 404 not found if given topic is not in topics', () => {
