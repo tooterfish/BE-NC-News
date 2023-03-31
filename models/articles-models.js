@@ -135,3 +135,14 @@ exports.updateArticleVotes = (articleId, incVotes) => {
     else return Promise.reject({ status:404, msg: 'article not found' })
   })
 }
+
+exports.removeArticle = (articleId) => {
+  const queryStr = `
+  DELETE FROM articles
+  WHERE article_id = $1
+  `
+  return db.query(queryStr, [ articleId ]).then((result) => {
+    console.log(result)
+    if (result.rowCount === 0) return Promise.reject({ status: 404, msg: 'article not found' })
+  })
+}
