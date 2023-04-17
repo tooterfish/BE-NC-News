@@ -2,10 +2,13 @@ const express = require('express')
 const { handleErrors } = require('./controllers/error-controllers')
 const apiRouter = require('./routes/api-router')
 const { pregenQueriesSets } = require('./app-utils')
+const cors = require('cors')
 
 pregenQueriesSets()
 
+
 const app = express()
+app.use(cors())
 app.use(express.json())
 
 app.use('/api', apiRouter)
