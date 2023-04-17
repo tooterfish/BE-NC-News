@@ -1,4 +1,3 @@
-const { forEach } = require('../db/data/test-data/articles')
 const { fetchArticle, fetchArticles, fetchCommentsByArticle, createComment, updateArticleVotes, createArticle, removeArticle } = require('../models/articles-models')
 
 exports.getArticle = (req, res, next) => {
