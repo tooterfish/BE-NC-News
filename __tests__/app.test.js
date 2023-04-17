@@ -160,14 +160,13 @@ describe('GET /api/articles/:article_id', () => {
 })
 
 describe('GET /api/articles', () => {
-  test('200: respond with an array of article objects with all article properties + comment_count', () => {
+  test('200: respond with an array of article objects with all article properties except body + comment_count', () => {
     const expected = 
     {
       article_id: expect.any(Number),
       title: expect.any(String),
       topic: expect.any(String),
       author: expect.any(String),
-      body: expect.any(String),
       created_at: expect.any(String),
       votes: expect.any(Number),
       article_img_url: expect.any(String),
