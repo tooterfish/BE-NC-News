@@ -89,7 +89,7 @@ exports.fetchCommentsByArticle = (articleId, limit = 10, page = 1) => {
   SELECT comments.* FROM comments
   JOIN articles ON comments.article_id = articles.article_id
   WHERE comments.article_id = $1
-  ORDER BY created_at ASC
+  ORDER BY created_at DESC
   LIMIT $2 OFFSET $3
   `
   const articleQueryStr = `

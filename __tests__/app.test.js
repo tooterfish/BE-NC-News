@@ -466,7 +466,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     .expect(200)
     .then((response) => {
       const { comments } = response.body
-      expect(comments).toBeSortedBy('created_at', { descending: false })
+      expect(comments).toBeSortedBy('created_at', { descending: true })
     })
   })
   test('200: respond with an empty array if article for given id has no comments', () => {
@@ -509,7 +509,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       let lastDate = new Date(comments[0].created_at)
       for (let i = 1; i < comments.length; i++) {
         const currDate = new Date(comments[i].created_at)
-        expect(currDate > lastDate).toBe(true)
+        expect(currDate < lastDate).toBe(true)
         lastDate = currDate
       }
     })
@@ -521,7 +521,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       let lastDate = new Date(comments[0].created_at)
       for (let i = 1; i < comments.length; i++) {
         const currDate = new Date(comments[i].created_at)
-        expect(currDate > lastDate).toBe(true)
+        expect(currDate < lastDate).toBe(true)
         lastDate = currDate
       }
     })
