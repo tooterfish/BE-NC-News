@@ -1,12 +1,12 @@
-# NC News
+# NC News - Back End
 
 ## Link to Hosted Version
 https://nc-news-1jvx.onrender.com/api/
 
 ## Project Summary
-NC News is a simple web api allowing users to read, post and comment on news articles.
+NC News - Back End is a simple web api allowing users to read, post and comment on news articles. It was made to serve the corresponding [NC News - Front End](https://github.com/tooterfish/fe-nc-news) project
 
-Created as part of the Northcoders web development bootcamp, it serves as a portfolio project to demonstrate skills and understanding of building a backend web api using node and postgres.
+Created as part of the Northcoders web development bootcamp, together these serve as portfolio projects to demonstrate skills and understanding of full stack development using node and react.
 
 ### Setup
 *Built with: Node v19.7.0, Postgres 14.7*
